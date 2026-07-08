@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gotita Roja | Pedidos y Donaciones</title>
+  <meta name="description" content="Formulario profesional para pedidos y donaciones de Gotita Roja." />
+  <link rel="icon" href="./assets/logo.svg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./config.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="./assets/logo.svg" alt="Gotita Roja" />
+      <div>
+        <strong>Gotita Roja</strong>
+        <span>Pedidos, donaciones y coordinación</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" data-view="clientView">Cliente</button>
+      <button class="nav-btn" data-view="adminView">Admin</button>
+    </nav>
+  </header>
+
+  <main class="shell">
+    <section id="authBanner" class="hero card">
+      <div>
+        <p class="eyebrow">Sistema profesional</p>
+        <h1>Pedidos confiables, donaciones claras y control administrativo.</h1>
+        <p class="muted">Registro seguro, pedidos con detalle, aprobación con QR fijo, comentarios, rechazo y seguimiento.</p>
+      </div>
+      <div class="hero-actions">
+        <button class="btn primary" id="openRegister">Crear cuenta</button>
+        <button class="btn ghost" id="openLogin">Iniciar sesión</button>
+      </div>
+    </section>
+
+    <section id="authModal" class="card auth-grid hidden">
+      <div class="auth-card">
+        <h2>Acceso de cliente</h2>
+        <form id="registerForm" class="form">
+          <label>Nombre completo
+            <input name="name" required minlength="3" placeholder="Luis Saucedo" />
+          </label>
+          <label>Correo electrónico
+            <input name="email" type="email" required placeholder="cliente@correo.com" />
+          </label>
+          <label>Celular
+            <input name="phone" required minlength="6" placeholder="+591 7xxxxxxx" />
+          </label>
+          <label>Contraseña
+            <input name="password" type="password" required minlength="8" placeholder="Mínimo 8 caracteres" />
+          </label>
+          <button class="btn primary" type="submit">Registrarme</button>
+        </form>
+      </div>
+      <div class="auth-card">
+        <h2>Ingreso</h2>
+        <form id="loginForm" class="form">
+          <label>Correo o celular
+            <input name="identifier" required placeholder="cliente@correo.com" />
+          </label>
+          <label>Contraseña
+            <input name="password" type="password" required />
+          </label>
+          <button class="btn primary" type="submit">Entrar</button>
+        </form>
+        <p class="small muted">Admin demo: <b>admin@gotitaroja.org</b> / <b>Admin123!</b></p>
+      </div>
+    </section>
+
+    <section id="clientView" class="grid-layout hidden">
+      <div class="card">
+        <div class="section-head">
+          <h2>Nuevo pedido / donación</h2>
+          <button class="btn ghost" id="logoutClient">Salir</button>
+        </div>
+
+        <form id="orderForm" class="form">
+          <div class="two-cols">
+            <label>Categoría
+              <select name="categoryId" id="categorySelect" required></select>
+            </label>
+            <label>Contacto para confirmar
+              <select name="contactMethod" required>
+                <option value="phone">Celular</option>
+                <option value="email">Correo</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="two-cols">
+            <label>Contacto
+              <input name="contactValue" required placeholder="Número o correo" />
+            </label>
+            <label>Entrega
+              <select name="fulfillmentType" id="fulfillmentType" required>
+                <option value="pickup">A recoger</option>
+                <option value="delivery">Envío / cotizar</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="deliveryFields" class="delivery-box hidden">
+            <div class="two-cols">
+              <label>Ubicación en texto
+                <input name="deliveryText" placeholder="Zona, barrio, referencia..." />
+              </label>
+              <label>Google Maps / URL
+                <input name="mapsUrl" placeholder="Pega el enlace de Google Maps o comparte ubicación" />
+              </label>
+            </div>
+            <div class="map-tools">
+              <button type="button" class="btn ghost" id="useGeo">Usar mi ubicación</button>
+              <span id="geoStatus" class="small muted"></span>
+            </div>
+            <div class="map-preview" id="mapPreview">
+              <iframe title="Mapa de entrega" id="mapFrame" loading="lazy"></iframe>
+            </div>
+          </div>
+
+          <div class="catalog card nested">
+            <div class="section-head">
+              <h3>Productos</h3>
+              <span class="small muted">Elige según disponibilidad de la categoría</span>
+            </div>
+            <div id="productsWrap" class="products-grid"></div>
+          </div>
+
+          <div class="card nested">
+            <div class="section-head">
+              <h3>Pedido especial (requiere confirmación)</h3>
+              <span class="small muted">Escribe y detalla lo que necesitas</span>
+            </div>
+            <textarea name="specialRequest" rows="4" placeholder="Ejemplo: necesito una variante especial, talla exacta, color específico..."></textarea>
+          </div>
+
+          <div class="two-cols">
+            <label>Observaciones
+              <textarea name="customerNote" rows="3" placeholder="Algún detalle adicional"></textarea>
+            </label>
+            <label>Resumen de donación
+              <div class="summary-box" id="summaryBox">Selecciona productos para ver el monto sugerido.</div>
+            </label>
+          </div>
+
+          <button class="btn primary" type="submit">Enviar pedido</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>Mis pedidos</h2>
+          <button class="btn ghost" id="refreshOrders">Actualizar</button>
+        </div>
+        <div id="ordersList" class="stack"></div>
+      </div>
+    </section>
+
+    <section id="adminView" class="grid-layout hidden">
+      <div class="card">
+        <div class="section-head">
+          <h2>Panel admin</h2>
+          <button class="btn ghost" id="logoutAdmin">Salir</button>
+        </div>
+        <div class="admin-metrics" id="adminMetrics"></div>
+
+        <div class="admin-block">
+          <h3>Categorías</h3>
+          <form id="categoryForm" class="inline-form">
+            <input name="name" placeholder="Nueva categoría" required />
+            <input name="description" placeholder="Descripción" />
+            <button class="btn primary" type="submit">Guardar</button>
+          </form>
+          <div id="categoriesAdmin" class="stack"></div>
+        </div>
+
+        <div class="admin-block">
+          <h3>Productos</h3>
+          <form id="productForm" class="grid-form">
+            <input name="id" type="hidden" />
+            <label>Categoría
+              <select name="categoryId" id="productCategorySelect" required></select>
+            </label>
+            <label>Nombre
+              <input name="name" required />
+            </label>
+            <label>Precio / donación sugerida
+              <input name="price" type="number" min="0" step="0.01" required />
+            </label>
+            <label>Stock
+              <input name="stock" type="number" min="0" step="1" required />
+            </label>
+            <label class="wide">Descripción
+              <input name="description" />
+            </label>
+            <label class="wide">Activo
+              <select name="active">
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+              </select>
+            </label>
+            <button class="btn primary wide" type="submit">Guardar producto</button>
+          </form>
+          <div id="productsAdmin" class="stack"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>Pedidos solicitados</h2>
+          <button class="btn ghost" id="refreshAdminOrders">Actualizar</button>
+        </div>
+        <div id="adminOrdersList" class="stack"></div>
+      </div>
+    </section>
+  </main>
+
+  <template id="orderTemplate">
+    <article class="order-card">
+      <div class="order-top">
+        <div>
+          <strong class="order-id"></strong>
+          <p class="small muted order-meta"></p>
+        </div>
+        <span class="pill status-pill"></span>
+      </div>
+      <div class="order-body"></div>
+      <div class="order-qr hidden">
+        <img src="./assets/qr-gotita-roja.png" alt="QR de Gotita Roja" />
+      </div>
+    </article>
+  </template>
+
+  <template id="productCardTemplate">
+    <button class="product-card" type="button">
+      <div class="product-head">
+        <strong class="product-name"></strong>
+        <span class="pill stock-pill"></span>
+      </div>
+      <p class="small muted product-desc"></p>
+      <div class="product-foot">
+        <span class="price"></span>
+        <input class="qty" type="number" min="0" step="1" value="0" />
+      </div>
+    </button>
+  </template>
+</body>
+</html>
