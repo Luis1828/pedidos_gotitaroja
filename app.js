@@ -1,7 +1,7 @@
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-const API = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'http://localhost:3000/api';
+const API = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'https://backend-gotitaroja.onrender.com/api';
 
 const state = {
   token: localStorage.getItem('gr_token') || '',
